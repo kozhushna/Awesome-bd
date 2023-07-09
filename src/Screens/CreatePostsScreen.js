@@ -78,7 +78,6 @@ const CreatePostScreen = () => {
   };
 
   const isPublishButtonEnabled = () => name && place;
-  console.log(showImageContainer);
   const imageSource = { uri: selectedFoto };
   return (
     <View>

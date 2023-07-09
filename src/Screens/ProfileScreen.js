@@ -16,33 +16,8 @@ import AvatarImageHolder from '../Components/AvatarImageHolder';
 import Message from '../Icons/Message.png';
 import { getUserPosts } from '../Services/posts-service';
 import { useAuth } from '../Redux/useAuth';
-
-const PUBLICATIONS = [
-  {
-    id: '1',
-    image: require('../Images/Forest.jpg'),
-    title: 'Ліс',
-    comments: '8',
-    likes: '153',
-    location: 'Ukraine',
-  },
-  {
-    id: '2',
-    image: require('../Images/Sea.jpg'),
-    title: 'Захід на Чорному морі',
-    comments: '3',
-    likes: '200',
-    location: 'Ukraine',
-  },
-  {
-    id: '3',
-    image: require('../Images/Home.jpg'),
-    title: 'Старий будиночок у Венеції',
-    comments: '50',
-    likes: '200',
-    location: 'Italy',
-  },
-];
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 const ProfileScreen = () => {
   const [publications, setPublications] = useState([]);
@@ -53,6 +28,18 @@ const ProfileScreen = () => {
       navigation.navigate('Login');
       return;
     }
+    const ref = collection(db, 'posts');
+    onSnapshot(
+      ref,
+      (data) => {
+        const posts = data.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPublications(posts);
+      },
+      () => {}
+    );
     (async () => {
       if (publications.length === 0) {
         const posts = await getUserPosts(user.id);
@@ -63,7 +50,9 @@ const ProfileScreen = () => {
 
   const renderItem = (item) => (
     <View style={styles.itemContainer}>
-      <Image source={item.image} style={styles.image} />
+      {item.image && (
+        <Image source={{ uri: item.image }} style={styles.image} />
+      )}
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.panelHolder}>
         <View style={styles.activitiesHolder}>
@@ -96,7 +85,7 @@ const ProfileScreen = () => {
     return {
       id: entity.id,
       title: entity.name,
-      image: entity.image,
+      image: entity.fotoUri,
       comments: entity.comments,
       likes: entity.likes,
       location: entity.place,

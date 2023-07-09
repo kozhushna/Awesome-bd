@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import {
   View,
@@ -14,50 +13,13 @@ import { AntDesign } from '@expo/vector-icons';
 import UserImage from '../Images/User.png';
 import MessageCircle from '../Icons/MessageCircle.png';
 import { useAuth } from '../Redux/useAuth';
-import { selectPosts } from '../Redux/selectors';
 import { getAllPosts } from '../Services/posts-service';
-import { addPost } from '../Redux/postsActions';
-import { useDispatch } from 'react-redux';
-
-const PUBLICATIONS = [
-  {
-    id: '1',
-    image: require('../Images/Forest.jpg'),
-    title: 'Ліс',
-    comments: '8',
-    likes: '153',
-    location: "Ivano-Frankivs'k Region, Ukraine",
-    latitude: 48.9215,
-    longitude: 24.70972,
-  },
-  {
-    id: '2',
-    image: require('../Images/Sea.jpg'),
-    title: 'Захід на Чорному морі',
-    comments: '3',
-    likes: '200',
-    location: 'Ukraine',
-    latitude: 46.482952,
-    longitude: 30.712481,
-  },
-  {
-    id: '3',
-    image: require('../Images/Home.jpg'),
-    title: 'Старий будиночок у Венеції',
-    comments: '50',
-    likes: '200',
-    location: 'Italy',
-    latitude: 45.438759,
-    longitude: 12.327145,
-  },
-];
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 const PostsScreen = ({ route }) => {
-  // const [publications, setPublications] = useState(PUBLICATIONS);
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const { isLoggedIn, user } = useAuth();
-  //const publications = useSelector(selectPosts);
   const [publications, setPublications] = useState([]);
 
   useEffect(() => {
@@ -65,13 +27,23 @@ const PostsScreen = ({ route }) => {
       navigation.navigate('Login');
       return;
     }
-    // dispatch(addPost([]));
+    const ref = collection(db, 'posts');
+
+    onSnapshot(
+      ref,
+      (data) => {
+        const posts = data.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPublications(posts);
+      },
+      () => {}
+    );
     (async () => {
-      //dispatch(addPost([]));
       if (publications.length === 0) {
         const posts = await getAllPosts(user.id);
         setPublications(posts);
-        //dispatch(addPost([]));
       }
     })();
   }, [isLoggedIn]);
@@ -89,7 +61,9 @@ const PostsScreen = ({ route }) => {
               title="Location"
               onPress={() =>
                 navigation.navigate('Comments', {
-                  id: item.id,
+                  postId: item.id,
+                  userId: item.userId,
+                  image: item.image,
                 })
               }
               color="white"
@@ -125,11 +99,11 @@ const PostsScreen = ({ route }) => {
       id: entity.id,
       title: entity.name,
       image: entity.fotoUri,
-      comments: entity.comments.length,
-      likes: 0,
+      comments: entity.commentsCount ?? 0,
       place: entity.place,
       latitude: entity.latitude,
       longitude: entity.longitude,
+      userId: entity.userId,
     };
   };
 

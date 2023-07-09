@@ -1,4 +1,12 @@
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import uploadImageToFirebase from './storage-service';
 
@@ -49,8 +57,20 @@ export const getUserPosts = async (userId) => {
       id: doc.id,
       ...doc.data(),
     }));
-    console.log(result);
     return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updatePost = async (postId) => {
+  try {
+    const docRef = doc(db, 'posts', postId);
+    const querySnapshot = await getDoc(docRef);
+    const result = querySnapshot.data();
+    await updateDoc(doc(db, 'posts', postId), {
+      commentsCount: (result.commentsCount ?? 0) + 1,
+    });
   } catch (error) {
     console.log(error);
   }

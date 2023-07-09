@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -39,9 +39,10 @@ const COMMENTS = [
   },
 ];
 
-const CommentScreen = () => {
-  const [comments, setComments] = useState(COMMENTS);
+const CommentScreen = ({ route }) => {
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState('');
+  const { postId, userId, image } = route.params;
 
   const renderItem = (item, index) => (
     <View
@@ -78,10 +79,15 @@ const CommentScreen = () => {
   };
 
   const getItemCount = (_data) => comments.length;
+  const imageSource = image ? { uri: image } : Sea;
+
+  const createComment = () => {
+    console.log(comment);
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={Sea} style={styles.image} />
+      <Image source={imageSource} style={styles.image} />
       <SafeAreaView style={styles.mainContainer}>
         <VirtualizedList
           data={comments}
@@ -97,9 +103,10 @@ const CommentScreen = () => {
           style={styles.input}
           placeholder="Коментувати..."
           value={comment}
+          onChangeText={setComment}
         />
 
-        <TouchableHighlight style={styles.button}>
+        <TouchableHighlight style={styles.button} onPress={createComment}>
           <AntDesign name="arrowup" size={14} color="#FFFFFF" />
         </TouchableHighlight>
       </View>
