@@ -7,6 +7,7 @@ export const storeUser = (user) => {
         displayName: user.displayName,
         isLoggedIn: true,
         id: user.uid,
+        photoURL: user.photoURL,
       },
     },
   };

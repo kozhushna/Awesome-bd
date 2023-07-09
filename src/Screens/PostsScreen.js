@@ -129,10 +129,17 @@ const PostsScreen = ({ route }) => {
 
   const getItemCount = (_data) => publications.length;
 
+  const avatar = user?.photoURL
+    ? {
+        uri: user?.photoURL,
+      }
+    : UserImage;
+  console.log(avatar);
+
   return (
     <View style={styles.container}>
       <View style={styles.holder}>
-        <Image source={UserImage} />
+        <Image source={avatar} style={{ width: 50, height: 50 }} />
         <View style={styles.textHolder}>
           <Text style={styles.caption}>{user.displayName}</Text>
           <Text style={styles.email}>{user.email}</Text>

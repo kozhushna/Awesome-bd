@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Pressable, StyleSheet, Image } from 'react-native';
 import UploadFoto from '../Icons/UploadFoto.png';
 
-const LoadImageButton = () => {
+const LoadImageButton = ({ onButtonClick }) => {
   return (
     <Pressable
       style={styles.button}
       title="Press Me"
-      onPress={() => console.log('Button pressed!')}
+      onPress={onButtonClick}
       color="white"
     >
       <View style={styles.container}>

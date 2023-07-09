@@ -6,10 +6,11 @@ import {
   signOut,
 } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
+import uploadImageToFirebase from './storage-service';
 
-export const registerDB = async ({ email, password, login }) => {
+export const registerDB = async ({ email, password, login, avatar }) => {
   const { user } = await createUserWithEmailAndPassword(auth, email, password);
-  await updateUserProfile(login);
+  await updateUserProfile(login, avatar);
   return auth.currentUser;
 };
 
@@ -27,13 +28,17 @@ export const logOut = async () => {
   }
 };
 
-const updateUserProfile = async (displayName) => {
+const updateUserProfile = async (displayName, avatar) => {
   const user = auth.currentUser;
-  // якщо такий користувач знайдений
+  let photoURL = '';
+
   if (user) {
-    // оновлюємо його профайл
+    if (avatar) {
+      photoURL = await uploadImageToFirebase(avatar);
+    }
     return await updateProfile(user, {
       displayName: displayName,
+      photoURL: photoURL,
     });
   }
 };

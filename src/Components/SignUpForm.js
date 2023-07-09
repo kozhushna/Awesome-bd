@@ -27,6 +27,7 @@ const SignUpForm = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isPasswordShowed, setIsPasswordShowed] = useState(true);
+  const [avatar, setAvatar] = useState(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -63,7 +64,7 @@ const SignUpForm = () => {
       Alert.alert('Please fill all fields.');
     }
     try {
-      const user = await registerDB({ email, password, login });
+      const user = await registerDB({ email, password, login, avatar });
       dispatch(storeUser(user));
       setEmail('');
       setLogin('');
@@ -137,7 +138,7 @@ const SignUpForm = () => {
               </TouchableHighlight>
             </View>
           </View>
-          <AvatarHolder />
+          <AvatarHolder onAvatarLoaded={setAvatar} />
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
