@@ -78,7 +78,9 @@ const PostsScreen = ({ route }) => {
 
   const renderItem = (item) => (
     <View style={styles.itemContainer}>
-      {item.image && <Image source={item.image} style={styles.image} />}
+      {item.image && (
+        <Image source={{ uri: item.image }} style={styles.image} />
+      )}
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.panelHolder}>
         <View style={styles.activitiesHolder}>
@@ -122,7 +124,7 @@ const PostsScreen = ({ route }) => {
     return {
       id: entity.id,
       title: entity.name,
-      image: '',
+      image: entity.fotoUri,
       comments: entity.comments.length,
       likes: 0,
       place: entity.place,

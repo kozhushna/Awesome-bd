@@ -1,5 +1,6 @@
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import uploadImageToFirebase from './storage-service';
 
 export const createPost = async ({
   userId,
@@ -7,7 +8,13 @@ export const createPost = async ({
   place,
   latitude,
   longitude,
+  selectedFoto,
 }) => {
+  let fotoUri = '';
+  if (selectedFoto) {
+    fotoUri = await uploadImageToFirebase(selectedFoto);
+  }
+
   return await addDoc(collection(db, 'posts'), {
     userId,
     name,
@@ -15,6 +22,7 @@ export const createPost = async ({
     comments: [],
     latitude,
     longitude,
+    fotoUri,
   });
 };
 

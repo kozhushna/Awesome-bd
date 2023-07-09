@@ -3,6 +3,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
+import * as ImagePicker from 'expo-image-picker';
 import {
   View,
   TextInput,
@@ -10,6 +11,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { addPost } from '../Redux/postsActions';
@@ -22,6 +24,7 @@ const CreatePostScreen = () => {
   const [place, setPlace] = useState('');
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
+  const [selectedFoto, setSelectedFoto] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [showImageContainer, setShowImageContainer] = useState(false);
   const navigation = useNavigation();
@@ -51,14 +54,32 @@ const CreatePostScreen = () => {
       place,
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
+      selectedFoto,
     });
-    dispatch(addPost(posts));
+    addPost(posts);
+    //dispatch();
     setName('');
     setPlace('');
     navigation.navigate('HomeTab');
   };
-  const isPublishButtonEnabled = () => name && place;
 
+  const pickFotoAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedFoto(result.assets[0].uri);
+      setShowImageContainer(true);
+    } else {
+      alert('You did not select any image.');
+    }
+  };
+
+  const isPublishButtonEnabled = () => name && place;
+  console.log(showImageContainer);
+  const imageSource = { uri: selectedFoto };
   return (
     <View>
       <View style={styles.container}>
@@ -87,10 +108,17 @@ const CreatePostScreen = () => {
           <View style={styles.fotoInput}>
             <View style={styles.imageHolder}>
               <AntDesign name="camera" size={24} color="#BDBDBD" />
+              {selectedFoto && (
+                <Image source={imageSource} style={styles.foto} />
+              )}
             </View>
           </View>
         )}
-        <Pressable title="Upload" style={styles.uploadButton}>
+        <Pressable
+          title="Upload"
+          style={styles.uploadButton}
+          onPress={pickFotoAsync}
+        >
           <Text style={styles.buttonText}>Завантажте фото</Text>
         </Pressable>
         <TextInput
@@ -175,6 +203,10 @@ const styles = StyleSheet.create({
 
   imageHolderActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  foto: {
+    height: 240,
+    width: 240,
   },
 
   camera: {
