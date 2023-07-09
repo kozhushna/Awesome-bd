@@ -52,7 +52,6 @@ const SignUpForm = () => {
     }
     try {
       const user = await loginDB(email, password);
-      console.log(user);
 
       dispatch(storeUser(user));
       setEmail('');

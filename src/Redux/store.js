@@ -17,22 +17,22 @@ import postsReducer from './postsReducer';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['user'],
+  // whitelist: ['user', 'posts'],
 };
 const rootReducer = combineReducers({
   posts: postsReducer,
   user: userReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-export const store = createStore(persistedReducer);
+//export const store = createStore(persistedReducer);
 
-// export const store = configureStore({
-//   persistedReducer,
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware({
-//       serializableCheck: {
-//         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-//       },
-//     }),
-// });
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
 export const persistor = persistStore(store);

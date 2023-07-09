@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
-import UploadFoto from '../Icons/UploadFoto.svg';
+import { View, Pressable, StyleSheet, Image } from 'react-native';
+import UploadFoto from '../Icons/UploadFoto.png';
 
 const LoadImageButton = () => {
   return (
@@ -11,7 +11,7 @@ const LoadImageButton = () => {
       color="white"
     >
       <View style={styles.container}>
-        <UploadFoto width={13} height={13} />
+        <Image source={UploadFoto} />
       </View>
     </Pressable>
   );

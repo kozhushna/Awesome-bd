@@ -1,10 +1,14 @@
-const initialState = [];
+const initialState = { posts: [] };
 
 const postsReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_POST':
-      return [...state, ...action.payload];
+      return action.payload;
+    // console.log('state', state);
+    //return [...state, ...action.payload];
     default:
       return state;
   }
 };
+
+export default postsReducer;

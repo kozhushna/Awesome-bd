@@ -63,9 +63,7 @@ const SignUpForm = () => {
       Alert.alert('Please fill all fields.');
     }
     try {
-      const user = await registerDB(email, password, login);
-      console.log(user);
-
+      const user = await registerDB({ email, password, login });
       dispatch(storeUser(user));
       setEmail('');
       setLogin('');

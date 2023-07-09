@@ -5,7 +5,6 @@ import ProfileScreen from '../Screens/ProfileScreen';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import LogOut from '../Icons/LogOut.svg';
 import CreatePostScreen from '../Screens/CreatePostsScreen';
 import { logOut } from '../Services/auth-service';
 import { useDispatch } from 'react-redux';
@@ -66,7 +65,14 @@ const TabNavigator = () => {
                 color="white"
               >
                 <View style={styles.buttonContainer}>
-                  <LogOut width={24} height={24} />
+                  <Image
+                    source={require('../Icons/LogOut.png')}
+                    resizeMode="contain"
+                    style={{
+                      width: 24,
+                      height: 24,
+                    }}
+                  />
                 </View>
               </TouchableOpacity>
             );
