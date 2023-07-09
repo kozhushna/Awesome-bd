@@ -2,13 +2,21 @@ import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import CloseImageButton from './CloseImageButton';
 import ProfileImage from '../Images/Profile.png';
+import { useAuth } from '../Redux/useAuth';
 
 const AvatarImageHolder = () => {
+  const { user } = useAuth();
+  const avatar = user?.photoURL
+    ? {
+        uri: user?.photoURL,
+      }
+    : ProfileImage;
+
   return (
     <View style={styles.fotoWrapper}>
       <View style={styles.imageHolder}>
         <CloseImageButton />
-        <Image source={ProfileImage} />
+        <Image source={avatar} style={styles.avatar} />
       </View>
     </View>
   );
@@ -31,6 +39,10 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#F6F6F6',
     borderRadius: 16,
+  },
+  avatar: {
+    width: 120,
+    height: 120,
   },
 });
 
