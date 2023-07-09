@@ -57,17 +57,21 @@ const PostsScreen = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { isLoggedIn, user } = useAuth();
-  const publications = useSelector(selectPosts);
+  //const publications = useSelector(selectPosts);
+  const [publications, setPublications] = useState([]);
 
   useEffect(() => {
     if (!isLoggedIn) {
       navigation.navigate('Login');
       return;
     }
+    // dispatch(addPost([]));
     (async () => {
+      //dispatch(addPost([]));
       if (publications.length === 0) {
         const posts = await getAllPosts(user.id);
-        dispatch(addPost(posts));
+        setPublications(posts);
+        //dispatch(addPost([]));
       }
     })();
   }, [isLoggedIn]);

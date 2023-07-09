@@ -28,14 +28,21 @@ export const getAllPosts = async (userId) => {
       ...doc.data(),
     }));
     return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-    // re;
-    // querySnapshot.forEach((doc) => {
-    //   console.log('1');
-
-    //   // doc.data() is never undefined for query doc snapshots
-    //   console.log(doc.id, ' => ', doc.data());
-    // });
+export const getUserPosts = async (userId) => {
+  const q = query(collection(db, 'posts'), where('userId', '==', userId));
+  try {
+    const querySnapshot = await getDocs(q);
+    const result = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    console.log(result);
+    return result;
   } catch (error) {
     console.log(error);
   }

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Avesome-bd",
-    "slug": "Avesome-bd",
+    "name": "avesome-bd",
+    "slug": "avesome-bd",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

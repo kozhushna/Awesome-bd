@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   View,
@@ -14,6 +14,8 @@ import { Feather } from '@expo/vector-icons';
 import FormContainer from '../Components/FormContainer';
 import AvatarImageHolder from '../Components/AvatarImageHolder';
 import Message from '../Icons/Message.png';
+import { getUserPosts } from '../Services/posts-service';
+import { useAuth } from '../Redux/useAuth';
 
 const PUBLICATIONS = [
   {
@@ -43,7 +45,21 @@ const PUBLICATIONS = [
 ];
 
 const ProfileScreen = () => {
-  const [publications, setPublications] = useState(PUBLICATIONS);
+  const [publications, setPublications] = useState([]);
+  const { isLoggedIn, user } = useAuth();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
+    }
+    (async () => {
+      if (publications.length === 0) {
+        const posts = await getUserPosts(user.id);
+        setPublications(posts);
+      }
+    })();
+  }, [isLoggedIn]);
 
   const renderItem = (item) => (
     <View style={styles.itemContainer}>
@@ -79,11 +95,11 @@ const ProfileScreen = () => {
     const entity = publications[index];
     return {
       id: entity.id,
-      title: entity.title,
+      title: entity.name,
       image: entity.image,
       comments: entity.comments,
       likes: entity.likes,
-      location: entity.location,
+      location: entity.place,
     };
   };
 
