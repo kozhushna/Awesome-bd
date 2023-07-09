@@ -134,7 +134,6 @@ const PostsScreen = ({ route }) => {
         uri: user?.photoURL,
       }
     : UserImage;
-  console.log(avatar);
 
   return (
     <View style={styles.container}>
