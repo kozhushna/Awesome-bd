@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -9,8 +10,12 @@ import {
   TouchableHighlight,
   TextInput,
 } from 'react-native';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 import { AntDesign } from '@expo/vector-icons';
 import Sea from '../Images/Sea.jpg';
+import { useAuth } from '../Redux/useAuth';
+import { getPostComments, createComment } from '../Services/comments-service';
 
 const COMMENTS = [
   {
@@ -43,6 +48,37 @@ const CommentScreen = ({ route }) => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState('');
   const { postId, userId, image } = route.params;
+  const { isLoggedIn, user } = useAuth();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigation.navigate('Login');
+      return;
+    }
+    const q = query(
+      collection(db, 'postscomments'),
+      where('postId', '==', postId)
+    );
+
+    onSnapshot(
+      q,
+      (data) => {
+        const result = data.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setComments(result);
+      },
+      () => {}
+    );
+    (async () => {
+      if (comments.length === 0) {
+        const data = await getPostComments(postId);
+        setComments(data);
+      }
+    })();
+  }, [isLoggedIn]);
 
   const renderItem = (item, index) => (
     <View
@@ -51,7 +87,9 @@ const CommentScreen = ({ route }) => {
         index % 2 === 0 ? styles.evenRow : styles.oddRow,
       ]}
     >
-      <Image source={item.image} />
+      {item.image && (
+        <Image source={{ uri: item.image }} style={styles.avatar} />
+      )}
       <View style={styles.contentContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>{item.text}</Text>
@@ -74,15 +112,28 @@ const CommentScreen = ({ route }) => {
       id: entity.id,
       text: entity.text,
       image: entity.image,
-      date: entity.date,
+      date: entity.createdDate.toString(),
     };
   };
 
   const getItemCount = (_data) => comments.length;
   const imageSource = image ? { uri: image } : Sea;
 
-  const createComment = () => {
-    console.log(comment);
+  const sendComment = async () => {
+    if (!comment) {
+      return;
+    }
+    const entry = {
+      postId,
+      text: comment,
+      userId: user.id,
+      image: user.photoURL,
+    };
+
+    //console.log(entry);
+    const result = await createComment(entry);
+    // console.log(result);
+    setComment('');
   };
 
   return (
@@ -106,7 +157,7 @@ const CommentScreen = ({ route }) => {
           onChangeText={setComment}
         />
 
-        <TouchableHighlight style={styles.button} onPress={createComment}>
+        <TouchableHighlight style={styles.button} onPress={sendComment}>
           <AntDesign name="arrowup" size={14} color="#FFFFFF" />
         </TouchableHighlight>
       </View>
@@ -177,6 +228,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 12,
     color: '#BDBDBD',
+  },
+
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 25,
   },
 
   evenDate: {

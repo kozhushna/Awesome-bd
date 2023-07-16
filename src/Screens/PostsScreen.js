@@ -107,7 +107,7 @@ const PostsScreen = ({ route }) => {
     };
   };
 
-  const getItemCount = (_data) => publications.length;
+  const getItemCount = (_data) => publications?.length ?? 0;
 
   const avatar = user?.photoURL
     ? {

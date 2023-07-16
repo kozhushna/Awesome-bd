@@ -16,7 +16,7 @@ import AvatarImageHolder from '../Components/AvatarImageHolder';
 import Message from '../Icons/Message.png';
 import { getUserPosts } from '../Services/posts-service';
 import { useAuth } from '../Redux/useAuth';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
 const ProfileScreen = () => {
@@ -28,9 +28,9 @@ const ProfileScreen = () => {
       navigation.navigate('Login');
       return;
     }
-    const ref = collection(db, 'posts');
+    const q = query(collection(db, 'posts'), where('userId', '==', user.id));
     onSnapshot(
-      ref,
+      q,
       (data) => {
         const posts = data.docs.map((doc) => ({
           id: doc.id,
