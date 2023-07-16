@@ -83,3 +83,22 @@ export const updatePost = async (postId) => {
     console.log(error);
   }
 };
+
+export const updateLikes = async (postId) => {
+  try {
+    const docRef = doc(db, 'posts', postId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const result = docSnap.data();
+      await updateDoc(doc(db, 'posts', postId), {
+        likes: (result.likes ?? 0) + 1,
+      });
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

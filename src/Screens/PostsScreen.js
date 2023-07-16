@@ -13,7 +13,7 @@ import { AntDesign } from '@expo/vector-icons';
 import UserImage from '../Images/User.png';
 import MessageCircle from '../Icons/MessageCircle.png';
 import { useAuth } from '../Redux/useAuth';
-import { getAllPosts } from '../Services/posts-service';
+import { getAllPosts, updateLikes } from '../Services/posts-service';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
@@ -48,6 +48,10 @@ const PostsScreen = ({ route }) => {
     })();
   }, [isLoggedIn]);
 
+  const sendLike = async (postId) => {
+    updateLikes(postId);
+  };
+
   const renderItem = (item) => (
     <View style={styles.itemContainer}>
       {item.image && (
@@ -58,7 +62,7 @@ const PostsScreen = ({ route }) => {
         <View style={styles.activitiesHolder}>
           <View style={styles.commentsHolder}>
             <TouchableOpacity
-              title="Location"
+              title="Comments"
               onPress={() =>
                 navigation.navigate('Comments', {
                   postId: item.id,
@@ -73,6 +77,12 @@ const PostsScreen = ({ route }) => {
 
             <Text style={styles.text}>{item.comments}</Text>
           </View>
+          <TouchableOpacity onPress={() => sendLike(item.id)}>
+            <View style={styles.likesHolder}>
+              <AntDesign name="like2" size={24} color="#BDBDBD" />
+              <Text style={styles.text}>{item.likes ?? 0}</Text>
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.locationHolder}>
           <AntDesign name="enviromento" size={24} color="#BDBDBD" />
@@ -104,6 +114,7 @@ const PostsScreen = ({ route }) => {
       latitude: entity.latitude,
       longitude: entity.longitude,
       userId: entity.userId,
+      likes: entity.likes,
     };
   };
 
@@ -209,6 +220,13 @@ const styles = StyleSheet.create({
   },
 
   commentsHolder: {
+    flex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+
+  likesHolder: {
     flex: 0,
     flexDirection: 'row',
     alignItems: 'center',
