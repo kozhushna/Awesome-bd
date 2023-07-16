@@ -27,7 +27,6 @@ export const createComment = async ({ postId, userId, image, text }) => {
     text,
     createdDate: new Date(),
   });
-  console.log(comment);
   await updatePost(postId);
   return comment;
 };

@@ -59,11 +59,11 @@ const ProfileScreen = () => {
           <View style={styles.commentsHolder}>
             <Image source={Message} />
 
-            <Text style={styles.text}>{item.comments}</Text>
+            <Text style={styles.text}>{item.commentsCount ?? 0}</Text>
           </View>
           <View style={styles.likesHolder}>
             <AntDesign name="like2" size={24} color="#FF6C00" />
-            <Text style={styles.text}>{item.likes}</Text>
+            <Text style={styles.text}>{item.likes ?? 0}</Text>
           </View>
         </View>
         <View style={styles.locationHolder}>
@@ -86,7 +86,7 @@ const ProfileScreen = () => {
       id: entity.id,
       title: entity.name,
       image: entity.fotoUri,
-      comments: entity.comments,
+      commentsCount: entity.commentsCount,
       likes: entity.likes,
       location: entity.place,
     };

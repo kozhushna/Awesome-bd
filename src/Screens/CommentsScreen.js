@@ -17,33 +17,6 @@ import Sea from '../Images/Sea.jpg';
 import { useAuth } from '../Redux/useAuth';
 import { getPostComments, createComment } from '../Services/comments-service';
 
-const COMMENTS = [
-  {
-    id: '1',
-    image: require('../Images/Avatar.png'),
-    text: 'Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!',
-    date: '09 червня, 2020 | 08:40',
-  },
-  {
-    id: '2',
-    image: require('../Images/MainAvatar.png'),
-    text: 'A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images.',
-    date: '09 червня, 2020 | 08:40',
-  },
-  {
-    id: '3',
-    image: require('../Images/Avatar.png'),
-    text: 'Thank you! That was very helpful!',
-    date: '09 червня, 2020 | 09:20',
-  },
-  {
-    id: '4',
-    image: require('../Images/Avatar.png'),
-    text: 'Thank you! That was very helpful!',
-    date: '09 червня, 2020 | 09:20',
-  },
-];
-
 const CommentScreen = ({ route }) => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState('');
@@ -87,8 +60,10 @@ const CommentScreen = ({ route }) => {
         index % 2 === 0 ? styles.evenRow : styles.oddRow,
       ]}
     >
-      {item.image && (
+      {item.image ? (
         <Image source={{ uri: item.image }} style={styles.avatar} />
+      ) : (
+        <Image source={require('../Images/Avatar.png')} />
       )}
       <View style={styles.contentContainer}>
         <View style={styles.textContainer}>
@@ -106,13 +81,21 @@ const CommentScreen = ({ route }) => {
     </View>
   );
 
+  const getFormatedDate = ({ seconds }) => {
+    const date = new Date(seconds * 1000);
+    return `${date.toDateString()} | ${date
+      .getHours()
+      .toString()
+      .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  };
+
   const getItem = (_data, index) => {
     const entity = comments[index];
     return {
       id: entity.id,
       text: entity.text,
       image: entity.image,
-      date: entity.createdDate.toString(),
+      date: getFormatedDate(entity.createdDate),
     };
   };
 
